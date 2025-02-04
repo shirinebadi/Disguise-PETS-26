@@ -5,6 +5,8 @@
 #include <time.h>
 #include <sys/time.h>
 #include "edge_wrapper.h"
+#include "sodium.h"
+#include "hacks.h"
 #include "usim.h"
 
 
@@ -14,7 +16,7 @@
 // char received_hash[129];
 // unsigned char signature[crypto_sign_BYTES];
 // unsigned char received_signature[crypto_sign_BYTES];
-
+unsigned char server_pk[crypto_kx_PUBLICKEYBYTES], server_sk[crypto_kx_SECRETKEYBYTES];
 void print_hex(unsigned char* buffer, size_t size){
     const char hex_chars[] = "0123456789abcdef";
     char hex_string[size*2 + 1];
@@ -196,7 +198,22 @@ void print_hex(unsigned char* buffer, size_t size){
 // }
 
 void EAPP_ENTRY eapp_entry(){
-  ocall_print_string("Computing SIM Challenge\n");
+  // ocall_print_string("Computing SIM Challenge\n");
+  ocall_print_string("Testing Libsodium...");
+  magic_random_init();
+    randombytes_set_implementation(&randombytes_salsa20_implementation);
+    
+    if (sodium_init() < 0) {
+        EAPP_RETURN(1);
+    }
+
+    if (crypto_kx_keypair(server_pk, server_sk) != 0) {
+        EAPP_RETURN(1);
+    }
+  ocall_print_string("Successfuly generated server public/private keys...");
+
+
+
   // struct timeval start, end;
     
   //  gettimeofday(&start, NULL);
@@ -230,9 +247,9 @@ void EAPP_ENTRY eapp_entry(){
     // }
     // print_hex(mac_o, 8);
 
-    if (gen_auth_res_milenage(opc_o, rand, autn_enb, res_o, 8, ak_xor_sqn) != 0){
-      ocall_print_string("Error in f2345");
-    }
+    // if (gen_auth_res_milenage(opc_o, rand, autn_enb, res_o, 8, ak_xor_sqn) != 0){
+    //   ocall_print_string("Error in f2345");
+    // }
 
 
 

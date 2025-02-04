@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
 enable_language(C CXX ASM)
 
-# # Check for required environment variables
-# if (NOT DEFINED ENV{LIBSODIUM_C_DIR})
-#   message(FATAL_ERROR "Please set LIBSODIUM_C_DIR")
-# endif()
-# set(LIBSODIUM_C_DIR $ENV{LIBSODIUM_C_DIR})
+# Check for required environment variables
+if (NOT DEFINED ENV{LIBSODIUM_C_DIR})
+  message(FATAL_ERROR "Please set LIBSODIUM_C_DIR")
+endif()
+set(LIBSODIUM_C_DIR $ENV{LIBSODIUM_C_DIR})
 # if(NOT DEFINED fw_bin)
 #    set(fw_bin ../../../images/fw_jump.bin)
 # endif()
@@ -31,6 +31,7 @@ add_executable(${eapp_bin} ${eapp_src})
 target_link_libraries(${eapp_bin} 
   PRIVATE ${KEYSTONE_LIB_EAPP} 
   PRIVATE ${KEYSTONE_LIB_EDGE}
+  PRIVATE ${LIBSODIUM_C_DIR}/.libs/libsodium.a
 
 
 )
@@ -38,6 +39,7 @@ target_include_directories(${eapp_bin}
   PRIVATE include
   PUBLIC ${KEYSTONE_SDK_DIR}/include/app
 PUBLIC ${KEYSTONE_SDK_DIR}/include/edge
+PRIVATE ${LIBSODIUM_C_DIR}/include
 
 
 )
