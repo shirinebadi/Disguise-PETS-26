@@ -9,6 +9,11 @@ cd libsodium
 git checkout 4917510626c55c1f199ef7383ae164cf96044aea
 patch -p1 < $DEMO_DIR/sodium_patches/configure.ac.patch
 
+#check riscv64-unknown-linux-gnu-gcc --version
+if not
+sudo ln -s /usr/bin/riscv64-linux-gnu-gcc /usr/bin/riscv64-unknown-linux-gnu-gcc
+
+
 # check the CFLAGS here first
 CFLAGS += -fno-stack-protector
 ./autogen.sh
@@ -18,3 +23,6 @@ make
 cd ..
 
 export LIBSODIUM_C_DIR=$(pwd)/libsodium/src/libsodium/
+
+riscv64-linux-gnu-readelf -h *.a 
+
