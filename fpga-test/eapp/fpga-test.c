@@ -29,18 +29,6 @@ void print_hex(unsigned char* buffer, size_t size){
 
     ocall_print_string(hex_string);
 }
-void print_h(unsigned char* buffer, size_t size){
-    const char hex_chars[] = "0123456789abcdef";
-    char hex_string[size*2 + 1];
-
-    for (size_t i = 0; i < size; i++) {
-        hex_string[i * 2] = hex_chars[(buffer[i] >> 4) & 0xF];
-        hex_string[i * 2 + 1] = hex_chars[buffer[i] & 0xF];
-    }
-    hex_string[size*2] = '\0';  
-
-    ocall_print_string(hex_string);
-}
 
 // void establish_secure_channel(){
 
