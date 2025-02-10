@@ -12,10 +12,10 @@
 
 void edge_init();
 unsigned long ocall_print_string(char* string);
-// void ocall_wait_for_message(struct edge_data *msg);
-// void ocall_send_ra_req(char* buffer, size_t len);
-// void ocall_wait_for_ra_resp(struct edge_data *msg);
-// void ocall_send_buffer(char* buffer, size_t len);
+void ocall_wait_for_message(struct edge_data *msg);
+void ocall_send_ra_req(char* buffer, size_t len);
+void ocall_wait_for_ra_resp(struct edge_data *msg);
+void ocall_send_buffer(char* buffer, size_t len);
 
 #endif /* _EDGE_WRAPPER_H_ */
 

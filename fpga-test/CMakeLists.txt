@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 enable_language(C CXX ASM)
 
-# Check for required environment variables
+# # Check for required environment variables
 if (NOT DEFINED ENV{LIBSODIUM_C_DIR})
   message(FATAL_ERROR "Please set LIBSODIUM_C_DIR")
 endif()
@@ -19,7 +19,7 @@ set(LIBSODIUM_C_DIR $ENV{LIBSODIUM_C_DIR})
 # Set paths to the libraries
 # Define targets and sources
 set(eapp_bin fpga-test)
-set(eapp_src eapp/fpga-test.c eapp/edge_wrapper.c eapp/usim.c eapp/aes.c)
+set(eapp_src eapp/fpga-test.c eapp/edge_wrapper.c eapp/channel.c eapp/usim.c eapp/aes.c)
 set(host_bin fpga-test-runner)
 set(host_src host/host-fpga.cpp host/edge_wrapper.cpp)
 set(package_name "fpga-test.ke")
