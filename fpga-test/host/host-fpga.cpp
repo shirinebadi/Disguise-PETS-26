@@ -56,6 +56,14 @@ char* eapp_file;
   char* rt_file;
   char* ld_file;
  char* sm_bin_file;
+ uint8_t rand_bytes[16] = {0};
+uint8_t opc_bytes[16] = {0};
+uint8_t autenb_bytes[16] = {0};
+
+uint8_t res[8] = {0};
+uint8_t ak_xor_sqn[6] = {0};
+uint8_t ck[16] = {0};
+uint8_t ik[16] = {0};
 // // Simple string copy function to replace memcpy
 void string_copy(char* dest, const char* src, size_t n) {
     for (size_t i = 0; i < n; ++i) {
@@ -325,9 +333,135 @@ printf("[EH] Sent Server Response.\n");
 return message;
 }
 
+void send_challenge_response(void* data, size_t len)
+{
+    printf("Challenge Response Recieved in Normal World.\n");
 
+    const unsigned char* bytes = static_cast<const unsigned char*>(data);
+
+    std::cout << "RES DATA (" << len << " bytes):" << std::endl;
+    
+    // Print hexadecimal representation
+    for (size_t i = 0; i < len; ++i) {
+        std::cout << std::setw(2) << std::setfill('0') << std::hex << static_cast<int>(bytes[i]) << " ";
+        if ((i + 1) % 16 == 0 || i == len - 1) {
+            std::cout << std::endl;
+        }
+    }
+
+    memcpy(res,data,8);
+    memcpy(ak_xor_sqn,data+8,6);
+    memcpy(ck,data+8+6,16);
+    memcpy(ik,data+8+6+16,16);
+
+    printf("\res: ");
+for(int i = 0; i < 8; i++) {
+    printf("%02x", (unsigned char)res[i]);
+}
+printf("\n");
+}
+
+encl_message_t send_challenge_to_vSIM(){
+    size_t len = 48;
+    
+  //   while (m[len] != '\0') ++len;
+  //   len += 1;  // +1 for null terminator
+    
+    char* buffer = static_cast<char*>(malloc(len));
+    if (buffer == NULL) {
+        // Handle memory allocation failure
+        printf("Memory allocation failed\n");
+        exit(1);
+    }
+  memcpy(buffer, rand_bytes, 16);
+      // Copy opc_bytes to next 16 bytes of buffer
+  memcpy(buffer + 16, opc_bytes, 16);
+  
+  memcpy(buffer + 32, autenb_bytes, 16);
+  
+  printf("Sending challenge - RAND: ");
+  for(int i = 0; i < 16; i++) {
+      printf("%02x", (unsigned char)buffer[i]);
+  }
+  printf("\nOPC: ");
+  for(int i = 16; i < 32; i++) {
+      printf("%02x", (unsigned char)buffer[i]);
+  }
+      printf("\n");
+    
+    encl_message_t message;
+    message.host_ptr = buffer;
+    message.len = len;
+    return message;
+  }
 
 int main(int argc, char** argv) {
+    if (argc < 6) {
+        // Not enough arguments provided
+        fprintf(stderr, "Usage: %s <eapp> <runtime> <loader> --sm-bin <fw_file> <number>\n", argv[0]);
+        return 1;
+    }
+
+    std::string rand_str, opc_str, autenb_str;
+    bool found_first = false;
+    
+bool found_second = false;
+
+for(int i = 1; i < argc; i++) {
+    // Check if argument is a valid hex string (should be 32 chars for 16 bytes)
+    if (strlen(argv[i]) == 32 && std::all_of(argv[i], argv[i] + 32, [](char c) {
+        return std::isxdigit(c);
+    })) {
+        if (!found_first) {
+            rand_str = argv[i];
+            found_first = true;
+            printf("Found RAND: %s\n", rand_str.c_str());
+        } else if (!found_second) {
+            opc_str = argv[i];
+            found_second = true;
+            printf("Found OPC: %s\n", opc_str.c_str());
+        } else {
+            autenb_str = argv[i];
+            printf("Found AUTN: %s\n", autenb_str.c_str());
+            break;
+        }
+    }
+}
+
+    if (!found_first) {
+        fprintf(stderr, "Error: No numbers provided\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < rand_str.length(); i += 2) {
+        std::string byteString = rand_str.substr(i, 2);
+        rand_bytes[i/2] = (uint8_t) strtol(byteString.c_str(), nullptr, 16);
+    }
+    
+    for (size_t i = 0; i < opc_str.length(); i += 2) {
+        std::string byteString = opc_str.substr(i, 2);
+        opc_bytes[i/2] = (uint8_t) strtol(byteString.c_str(), nullptr, 16);
+    }
+
+    for (size_t i = 0; i < autenb_str.length(); i += 2) {
+        std::string byteString = autenb_str.substr(i, 2);
+        autenb_bytes[i/2] = (uint8_t) strtol(byteString.c_str(), nullptr, 16);
+    }
+
+    // Print converted bytes to verify
+    printf("RAND bytes: ");
+    for(int i = 0; i < 16; i++) {
+        printf("%02x", rand_bytes[i]);
+    }
+    printf("\nOPC bytes: ");
+    for(int i = 0; i < 16; i++) {
+        printf("%02x", opc_bytes[i]);
+    }
+    printf("\nAUTENB bytes: ");
+    for(int i = 0; i < 16; i++) {
+        printf("%02x", autenb_bytes[i]);
+    }
+    printf("\n");
   Keystone::Enclave enclave;
   Keystone::Params params;
 // params.setFreeMemSize(4096 * 1024);
@@ -345,6 +479,35 @@ int main(int argc, char** argv) {
  
   enclave.run();
 
-  return 0;
+  std::string res_str, xor_str, ck_str, ik_str ;
+    for(int i = 0; i < 8; i++) {
+        char temp[3];
+        snprintf(temp, sizeof(temp), "%02x", res[i]);
+        res_str += temp;
+    }
+        for(int i = 0; i < 6; i++) {
+        char temp[3];
+        snprintf(temp, sizeof(temp), "%02x", ak_xor_sqn[i]);
+        xor_str += temp;
+    }
+        for(int i = 0; i < 16; i++) {
+        char temp[3];
+        snprintf(temp, sizeof(temp), "%02x", ck[i]);
+        ck_str += temp;
+    }
+        for(int i = 0; i < 16; i++) {
+        char temp[3];
+        snprintf(temp, sizeof(temp), "%02x", ik[i]);
+        ik_str += temp;
+    }
+
+    // Print the string (optional)
+    printf("RES: %s\n", res_str.c_str());
+    printf("xor: %s\n", xor_str.c_str());
+    printf("ck: %s\n", ck_str.c_str());
+    printf("ik: %s\n", ik_str.c_str());
+
+    // Return the string length as success code
+    return res_str.length();
 }
 

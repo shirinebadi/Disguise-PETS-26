@@ -167,13 +167,11 @@ LIBLTE_ERROR_ENUM gen_auth_res_milenage(unsigned char* opc, unsigned char* rand,
   uint32_t      i;
   unsigned char       sqn[6];
   unsigned char amf[4];
-  unsigned char ck[16];
-  unsigned char ik[16];
   unsigned char ak[6];
   unsigned char mac[8];
   unsigned char autn[16];
   // This should be stored in the secure storage
-  unsigned char k[]    = {0x46, 0x5b, 0x5c, 0xe8, 0xb1, 0x99, 0xb4, 0x9f, 0xaa, 0x5f, 0x0a, 0x2e, 0xe2, 0x38, 0xa6, 0xbc};
+  unsigned char k[]    = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
 
   // Use RAND and K to compute RES, CK, IK and AK
   liblte_security_milenage_f2345(k, opc, rand, res, ck, ik, ak);

@@ -1,0 +1,35 @@
+Target Package -----
+---networkingn application---
+iperf3
+iproute2
+ipset
+net-tools
+netcat
+----libraries---
+
+compression:
+libarchive
+zlib
+libmd
+
+crypto:
+mbedtls
+openssl
+
+filesystem:
+libconfig
+
+networking:
+curlpp
+czmq
+libcurl
+enable extra
+
+other:
+boost
+boodt-atomic...
+fftw
+libbsd
+
+termina:l
+ncurses

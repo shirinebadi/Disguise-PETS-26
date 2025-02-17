@@ -23,7 +23,7 @@ set(eapp_src eapp/fpga-test.c eapp/edge_wrapper.c eapp/channel.c eapp/usim.c eap
 set(host_bin fpga-test-runner)
 set(host_src host/host-fpga.cpp host/edge_wrapper.cpp)
 set(package_name "fpga-test.ke")
-set(package_script "./fpga-test-runner fpga-test eyrie-rt loader.bin")
+set(package_script "./fpga-test-runner fpga-test eyrie-rt loader.bin \"$@\"")
 set(eyrie_plugins "none")
 
 # EAPP target

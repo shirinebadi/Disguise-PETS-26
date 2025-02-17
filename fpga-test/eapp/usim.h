@@ -5,6 +5,9 @@
 #include "eapp_utils.h"
 #include "string.h"
 
+extern unsigned char ck[16];
+extern unsigned char ik[16];
+
 typedef enum {
   LIBLTE_SUCCESS = 0,
   LIBLTE_ERROR_INVALID_INPUTS,

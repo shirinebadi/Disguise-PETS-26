@@ -10,7 +10,8 @@
 #include "edge_wrapper.h"
 #include "usim.h"
 
-
+unsigned char ck[16];
+unsigned char ik[16];
 unsigned char nonce[crypto_aead_xchacha20poly1305_ietf_NPUBBYTES];
 unsigned char received_nonce[crypto_aead_xchacha20poly1305_ietf_NPUBBYTES];
 char provider_hash[129] = "6d835fbffebfefbdced9c7267bcb7011dc2665e3966d820e109ab9c831f35ba01bf5d57e15581479579adee91f1b3a1f76792e2162a64d833b717dd5ba53c7f218";
@@ -150,9 +151,45 @@ void establish_secure_channel(){
 
 
 void EAPP_ENTRY eapp_entry(){
-  ocall_print_string("Establishing Secure Channel with Provider\n");
+  unsigned char opc_o[16] = {0};  // Initialize to zeros
+  unsigned char rand[16] = {0}; 
+  unsigned char res_o[8];
+  unsigned char ak_xor_sqn[6];
+  unsigned char autn_enb[16] = {0};
     
-  establish_secure_channel();
+  struct edge_data resp;
+    ocall_wait_for_challenge(&resp);
+    void* data_copy = malloc(resp.size);
+    copy_from_shared(data_copy, resp.offset, resp.size);
+
+    memcpy(rand, data_copy, 16);
+    // Next 16 bytes are opc
+    memcpy(opc_o, data_copy + 16, 16);
+
+  memcpy(autn_enb, data_copy + 32, 16);
+  ocall_print_string("------------autnenb:\n");
+  print_hex(autn_enb, 16);
+    if (gen_auth_res_milenage(opc_o, rand, autn_enb, res_o, 8, ak_xor_sqn) != 0){
+      ocall_print_string("Error in f2345");
+    }
+
+    unsigned char* send_buffer = malloc(92);
+    if(send_buffer == NULL){
+      ocall_print_string("Reply too large to allocate, no reply sent\n");
+    }
+
+    // res_o
+    memcpy(send_buffer, res_o, 8);
+    // ak_xor_sqn
+    memcpy(send_buffer+8, ak_xor_sqn, 6);
+    // ck
+    memcpy(send_buffer +8 + 6, ck,16);
+    //ik
+    memcpy(send_buffer +8 + 6 + 16, ik,16);
+
+
+
+    ocall_send_challenge_response(send_buffer, 46);
 
   EAPP_RETURN(0);
 }
