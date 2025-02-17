@@ -151,7 +151,6 @@ auth_result_t usim::generate_authentication_response_5g(uint8_t*    rand,
   if (auth_algo_xor == auth_algo) {
     auth_result = gen_auth_res_xor(rand, autn_enb, res, &res_len, ak_xor_sqn);
   } else {
-  auth_result = gen_auth_res_milenage(rand, autn_enb, res, &res_len, ak_xor_sqn);
     auth_result = gen_auth_res_milenage_vsim(rand, autn_enb, res, &res_len, ak_xor_sqn);
   }
 
