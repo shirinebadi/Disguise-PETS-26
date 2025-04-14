@@ -18,12 +18,12 @@ set(LIBSODIUM_C_DIR $ENV{LIBSODIUM_T_DIR})
 
 # Set paths to the libraries
 # Define targets and sources
-set(eapp_bin fpga-test)
-set(eapp_src eapp/fpga-test.c eapp/edge_wrapper.c eapp/channel.c eapp/usim.c eapp/aes.c)
-set(host_bin fpga-test-runner)
+set(eapp_bin fpga-provision)
+set(eapp_src eapp/fpga-provision.c eapp/edge_wrapper.c eapp/channel.c eapp/usim.c eapp/aes.c)
+set(host_bin fpga-provision-runner)
 set(host_src host/host-fpga.cpp host/edge_wrapper.cpp)
-set(package_name "fpga-test.ke")
-set(package_script "./fpga-test-runner fpga-test eyrie-rt loader.bin \"$@\"")
+set(package_name "fpga-provision.ke")
+set(package_script "./fpga-provision-runner fpga-provision eyrie-rt loader.bin \"$@\"")
 set(eyrie_plugins "none")
 
 # EAPP target

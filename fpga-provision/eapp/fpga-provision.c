@@ -18,6 +18,7 @@ char provider_hash[129] = "6d835fbffebfefbdced9c7267bcb7011dc2665e3966d820e109ab
 char received_hash[129];
 unsigned char signature[crypto_sign_BYTES];
 unsigned char received_signature[crypto_sign_BYTES];
+struct timeval en_start, en_end;
 
 void print_hex(unsigned char* buffer, size_t size){
     const char hex_chars[] = "0123456789abcdef";
@@ -54,7 +55,7 @@ void establish_secure_channel(){
   asymmetric_box(send_buffer, 56, initiate_buff, dev_public_key);
   ocall_send_ra_req(initiate_buff, 104);
 
-  ocall_print_string("[C] Successfully sent nonce and public key\n");
+  //ocall_print_string("[C] Successfully sent nonce and public key\n");
   
   // Wait for server key and report
   struct edge_data resp;
@@ -62,7 +63,7 @@ void establish_secure_channel(){
   void* data_copy = malloc(resp.size);
   copy_from_shared(data_copy, resp.offset, resp.size);
 
-  ocall_print_string("[C] Successfully Recieved provider Response\n");
+  //ocall_print_string("[C] Successfully Recieved provider Response\n");
 
   unsigned char* response_buff = malloc(1024);
   if(response_buff == NULL){
@@ -70,10 +71,10 @@ void establish_secure_channel(){
     }
   
   asymmetric_unbox((unsigned char*)data_copy, 233, response_buff);
-  ocall_print_string("[C] Successfully Decrypted provider Response\n");
+  //ocall_print_string("[C] Successfully Decrypted provider Response\n");
 
   memcpy(received_nonce, (unsigned char*)response_buff, crypto_aead_xchacha20poly1305_ietf_NPUBBYTES);
-  ocall_print_string("[C] Nonce extracted\n");
+  //ocall_print_string("[C] Nonce extracted\n");
 
   // Verify Nonce
   if (sodium_memcmp(nonce, received_nonce, crypto_aead_xchacha20poly1305_ietf_NPUBBYTES) == 0) {
@@ -82,7 +83,7 @@ void establish_secure_channel(){
       ocall_print_string("[C] Error in Received Nonce\n");
       EAPP_RETURN(1);
   }
-  print_hex(received_nonce, crypto_aead_xchacha20poly1305_IETF_NPUBBYTES);
+  //print_hex(received_nonce, crypto_aead_xchacha20poly1305_IETF_NPUBBYTES);
 
 // Extract Provider Quote
   memcpy(received_hash, 
@@ -90,7 +91,7 @@ void establish_secure_channel(){
   129);
   
   // Verify Quote
-  print_hex(provider_hash, 129);
+  //print_hex(provider_hash, 129);
   if (memcmp(received_hash, provider_hash, 129) == 0){
     ocall_print_string("[C] Provider Quote verified\n");
   } else{
@@ -102,18 +103,18 @@ void establish_secure_channel(){
    memcpy(dest, nonce, crypto_aead_xchacha20poly1305_IETF_NPUBBYTES);
     
     // Copy hash
-    print_hex(provider_hash, 129);
+    //print_hex(provider_hash, 129);
     memcpy(dest + crypto_aead_xchacha20poly1305_IETF_NPUBBYTES, provider_hash, 129);
 
   // Extract server public key
   memcpy(client_pk, 
            (unsigned char*)response_buff + crypto_aead_xchacha20poly1305_ietf_NPUBBYTES + 129, 
            crypto_kx_PUBLICKEYBYTES);
-  ocall_print_string("[C] Provider Pub key extracted\n");
+  //ocall_print_string("[C] Provider Pub key extracted\n");
 
   // Generate Session Keys
   generate_session_keys();
-  ocall_print_string("[C] Successfully generated session keys.\n");
+  //ocall_print_string("[C] Successfully generated session keys.\n");
 
   // Send encrypted Quote
   size_t reply_len = crypto_secretbox_MACBYTES + BLOCK_UP(96) + crypto_secretbox_NONCEBYTES;
@@ -123,7 +124,9 @@ void establish_secure_channel(){
     }
 
   char attestation_buffer[2048];
+  gettimeofday(&en_start, NULL);
   attest_enclave((void*) attestation_buffer, nonce, crypto_aead_xchacha20poly1305_ietf_NPUBBYTES);
+  gettimeofday(&en_end, NULL);
   
   memcpy(send_buffer, attestation_buffer, 64 + 8 + crypto_aead_xchacha20poly1305_ietf_NPUBBYTES);
 
@@ -135,7 +138,7 @@ void establish_secure_channel(){
 
   copy_from_shared(data_copy, resp.offset, resp.size);
   size_t ack_len;
-  ocall_print_string("decrypting ack");
+  //ocall_print_string("decrypting ack");
   channel_unbox((unsigned char*)data_copy, 72, &ack_len);
 
   // ocall_print_string(ack_len);
@@ -145,9 +148,21 @@ void establish_secure_channel(){
         EAPP_RETURN(1);
     }
   
-  EAPP_RETURN(0);
 
 }
+long get_ms(void) {     
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+}
+
+// Method 2: Using gettimeofday()
+long get_ms_gettimeofday(void) {
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+}
+
 void ltoa(long num, char* str) {
   int i = 0;
   int is_negative = 0;
@@ -185,77 +200,114 @@ void ltoa(long num, char* str) {
   }
 }
 
-
-void EAPP_ENTRY eapp_entry(){
-  unsigned char opc_o[16] = {0};  // Initialize to zeros
-  unsigned char rand[16] = {0}; 
-  unsigned char res_o[8];
-  unsigned char ak_xor_sqn[6];
-  unsigned char autn_enb[16] = {0};
-    
-  struct edge_data resp;
-    ocall_wait_for_challenge(&resp);
-    void* data_copy = malloc(resp.size);
-    copy_from_shared(data_copy, resp.offset, resp.size);
-
-    memcpy(rand, data_copy, 16);
-    // Next 16 bytes are opc
-    memcpy(opc_o, data_copy + 16, 16);
-
-  memcpy(autn_enb, data_copy + 32, 16);
-  //ocall_print_string("------------autnenb:\n");
-  //print_hex(autn_enb, 16);
+void test_with_real_delay() {
   struct timeval delay_start, delay_end;
   
   gettimeofday(&delay_start, NULL);
   
-    if (gen_auth_res_milenage(opc_o, rand, autn_enb, res_o, 8, ak_xor_sqn) != 0){
-      ocall_print_string("Error in f2345");
-    }
-    gettimeofday(&delay_end, NULL);
+  // Sleep for 500ms 
+  // Note: You'll need to implement this in your environment
+  // This is just a conceptual example
+  ocall_wait();
   
-    long seconds = delay_end.tv_sec - delay_start.tv_sec;
-    long microseconds = delay_end.tv_usec - delay_start.tv_usec;
+  gettimeofday(&delay_end, NULL);
+  
+  long seconds = delay_end.tv_sec - delay_start.tv_sec;
+  long microseconds = delay_end.tv_usec - delay_start.tv_usec;
+  
+  if (microseconds < 0) {
+      seconds--;
+      microseconds += 1000000;
+  }
+  
+  long milliseconds = (seconds * 1000) + (microseconds / 1000);
+  
+  char debug[100];
+  ltoa(seconds, debug);
+  ocall_print_string("Seconds: ");
+  ocall_print_string(debug);
+  ocall_print_string("\n");
+  ltoa(microseconds, debug);
+  ocall_print_string("Microseconds: ");
+  ocall_print_string(debug);
+  ocall_print_string("\n");
+  ltoa(milliseconds, debug);
+  ocall_print_string("Sleep test (should be ~12345ms): ");
+  ocall_print_string(debug);
+  ocall_print_string("\n");
+}
+
+void EAPP_ENTRY eapp_entry(){
+  ocall_print_string("Establishing Secure Channel with Provider\n");
+  struct timeval start, end;
+  
+  gettimeofday(&start, NULL);
+
+  establish_secure_channel();
+  
+
+
+  gettimeofday(&end, NULL);
+  ocall_print_string("Results: \n");
     
-    if (microseconds < 0) {
-        seconds--;
-        microseconds += 1000000;
-    }
-    
-    long milliseconds = (seconds * 1000) + (microseconds / 1000);
-    
-    char debug[100];
-    ltoa(seconds, debug);
-    ocall_print_string("Seconds: ");
-    ocall_print_string(debug);
-    ocall_print_string("\n");
-    ltoa(microseconds, debug);
-    ocall_print_string("Microseconds: ");
-    ocall_print_string(debug);
-    ocall_print_string("\n");
-    ltoa(milliseconds, debug);
-    ocall_print_string("MilliSecond: ");
-    ocall_print_string(debug);
-    ocall_print_string("\n");
+  // Calculate time difference in different units
+  long seconds = end.tv_sec - start.tv_sec;
+  long microseconds = end.tv_usec - start.tv_usec;
+
+  long en_seconds = en_end.tv_sec - en_start.tv_sec;
+  long en_microseconds = en_end.tv_usec - en_start.tv_usec;
+  
+  // Adjust for microsecond overflow
+  if (microseconds < 0) {
+      seconds--;
+      microseconds += 1000000;
+  }
+
+  if (en_microseconds < 0) {
+    en_seconds--;
+    en_microseconds += 1000000;
+}
+  
+  // Convert to milliseconds
+  long milliseconds = (seconds * 1000) + (microseconds / 1000);
+  long en_milliseconds = (en_seconds * 1000) + (en_microseconds / 1000);
+  
+  // Print each component
+  char debug[100];
+  ltoa(seconds, debug);
+  ocall_print_string("Seconds: ");
+  ocall_print_string(debug);
+  ocall_print_string("\n");
+  
+  ltoa(microseconds, debug);
+  ocall_print_string("Microseconds: ");
+  ocall_print_string(debug);
+  ocall_print_string("\n");
+  
+  ltoa(milliseconds, debug);
+  ocall_print_string("Milliseconds: ");
+  ocall_print_string(debug);
+  ocall_print_string("\n");
 
 
-    unsigned char* send_buffer = malloc(92);
-    if(send_buffer == NULL){
-      ocall_print_string("Reply too large to allocate, no reply sent\n");
-    }
+  ocall_print_string("Attestation Results: \n");
+  char en_debug[100];
+  ltoa(en_seconds, en_debug);
+  ocall_print_string("Seconds: ");
+  ocall_print_string(en_debug);
+  ocall_print_string("\n");
+  
+  ltoa(en_microseconds, en_debug);
+  ocall_print_string("Microseconds: ");
+  ocall_print_string(en_debug);
+  ocall_print_string("\n");
+  
+  ltoa(en_milliseconds, en_debug);
+  ocall_print_string("Milliseconds: ");
+  ocall_print_string(en_debug);
+  ocall_print_string("\n");
 
-    // res_o
-    memcpy(send_buffer, res_o, 8);
-    // ak_xor_sqn
-    memcpy(send_buffer+8, ak_xor_sqn, 6);
-    // ck
-    memcpy(send_buffer +8 + 6, ck,16);
-    //ik
-    memcpy(send_buffer +8 + 6 + 16, ik,16);
-
-
-
-    ocall_send_challenge_response(send_buffer, 46);
+  test_with_real_delay();
 
   EAPP_RETURN(0);
 }

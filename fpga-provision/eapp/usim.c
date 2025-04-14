@@ -38,7 +38,7 @@ unsigned long long clen;
     for (i = 0; i < 16; i++) {
       input[i] = rand[i] ^ op_c[i];
     }
-    //ocall_print_string("Context!");
+    ocall_print_string("Context!");
     memcpy(temp, input, 16);
     AES_ECB_encrypt(&ctx, temp);
     //Compute out for RES and AK
@@ -61,7 +61,7 @@ unsigned long long clen;
     for (i = 0; i < 6; i++) {
       ak[i] = out[i];
     }
-    //print_h(ak,8);
+    print_h(ak,8);
     // Compute out for CK
     for (i = 0; i < 16; i++) {
       input[(i + 12) % 16] = temp[i] ^ op_c[i];
@@ -77,7 +77,7 @@ unsigned long long clen;
     for (i = 0; i < 16; i++) {
       ck[i] = out[i];
     }
-    //print_h(ck,16);
+    print_h(ck,16);
 
     // Compute out for IK
     for (i = 0; i < 16; i++) {
@@ -205,13 +205,13 @@ LIBLTE_ERROR_ENUM gen_auth_res_milenage(unsigned char* opc, unsigned char* rand,
   //     //err = LIBLTE_ERROR_ENCODE_FAIL
   //   }
   // }
-  // print_hex(k, 16);
-  // print_hex(res, 8);
-  // print_hex(ck, 16);
-  // print_hex(ik,16);
-  // print_hex(ak,6);
-  // print_h(autn, 16);
-  // print_hex(mac, 8);
+  print_hex(k, 16);
+  print_hex(res, 8);
+  print_hex(ck, 16);
+  print_hex(ik,16);
+  print_hex(ak,6);
+  print_h(autn, 16);
+  print_hex(mac, 8);
 
   for (i = 0; i < 6; i++) {
     ak_xor_sqn[i] = sqn[i] ^ ak[i];

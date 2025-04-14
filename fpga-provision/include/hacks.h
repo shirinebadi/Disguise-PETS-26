@@ -205,19 +205,19 @@ int getpid(){
 
 /* TODO give a better timeofday */
 int gettimeofday(struct timeval *__restrict tv, void *__restrict tz) {
-  unsigned long cycles;
-  asm volatile ("rdcycle %0" : "=r" (cycles));
+    unsigned long cycles;
+    asm volatile ("rdcycle %0" : "=r" (cycles));
 
-  
-  const unsigned long CPU_FREQ = 100000000;  
-  
-  unsigned long 
-  total_usec = (cycles * 1000000ULL) / CPU_FREQ;
-  
-  tv->tv_sec = total_usec / 1000000ULL;
-  tv->tv_usec = total_usec % 1000000ULL;
+    
+    const unsigned long CPU_FREQ = 100000000;  
+    
+    unsigned long 
+    total_usec = (cycles * 1000000ULL) / CPU_FREQ;
+    
+    tv->tv_sec = total_usec / 1000000ULL;
+    tv->tv_usec = total_usec % 1000000ULL;
 
-  return 0;
+    return 0;
 }
 
 int* __errno_location(void){
