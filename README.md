@@ -1,4 +1,4 @@
-This repository contains the protoype code of the Di5Guise system proposed in [] paper and published at PETS'26.
+This repository contains the protoype code of the Di5Guise system published at PETS'26.
 
 # Setup
 ## Qemu or FPGA
