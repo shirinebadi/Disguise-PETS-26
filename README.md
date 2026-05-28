@@ -2,7 +2,7 @@ This repository contains the protoype code of the Di5Guise system published at P
 
 # Setup
 ## QEMU or FPGA
-You can either run the code on Qemu or on your FPGA board. Checkout [here](https://github.com/jzmoolman/vivado-risc-v) for The FPGA design. Otherwise, follow the instructions from [here](https://docs.keystone-enclave.org/en/v0.1-c2e5205/Getting-Started/Running-Keystone-with-QEMU.html) to setup Keystone with QEMU If using Qemu. Also, make sure to add the tunnel between your host and QEMU for network accessibility.
+You can either run the code on Qemu or on your FPGA board. Checkout [here](https://github.com/jzmoolman/vivado-risc-v) for The FPGA design. Otherwise, follow the instructions from [here](https://docs.keystone-enclave.org/en/v0.1-c2e5205/Getting-Started/Running-Keystone-with-QEMU.html) to setup Keystone with QEMU. Also, make sure to add the tunnel between the host and QEMU for network accessibility.
 
 ## Keystone
 You need to setup the keystone in your environment and make sure the example applications are running. Replace the `keystone-patches/string.c` file with all the `string.c` files in the keystone. 
@@ -23,5 +23,7 @@ First run the `provider/provider.cpp` for the operator server to be ready and ru
 
 ## Authentication
 Run srsran using `ZMQ` using this [tutorial](https://docs.srsran.com/projects/project/en/latest/tutorials/source/srsUE/source/index.html). Then build and run `vsim/fpga-test`. Make sure the program is started and running. In another terminal, start the srsUE to begin the authentication and connection to network. You should see the logs.
+
+For further questions, please contact me at `shirin.ebadi@colorado.edu`.
 
 
