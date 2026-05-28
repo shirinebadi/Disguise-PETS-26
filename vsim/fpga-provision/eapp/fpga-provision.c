@@ -8,7 +8,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include "edge_wrapper.h"
-#include "usim.h"
+
 
 unsigned char ck[16];
 unsigned char ik[16];
