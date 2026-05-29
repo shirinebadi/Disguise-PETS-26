@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Modified by Shirin Ebadi, 2026, for Di5Guise.
+// Original: https://github.com/srsran/srsRAN_4G
 /**
  * Copyright 2013-2023 Software Radio Systems Limited
  *
