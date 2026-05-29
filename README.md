@@ -25,7 +25,7 @@ The profile provisioning implementation is located in `vsim/fpga-provision`.
 First run the `provider/provider.cpp` for the operator server to be ready and running. Next build and run the `vsim/fpga-provision`. This will add a new subsriber and device profile.
 
 ## Authentication
-Run srsran using `ZMQ` using this [tutorial](https://docs.srsran.com/projects/project/en/latest/tutorials/source/srsUE/source/index.html). Then build and run `vsim/fpga-test`. Make sure the program is started and running. In another terminal, start the srsUE to begin the authentication and connection to network. You should see the connected logs.
+Run srsran using `ZMQ` using this [tutorial](https://docs.srsran.com/projects/project/en/latest/tutorials/source/srsUE/source/index.html). Then build and run `vsim/fpga-auth`. Make sure the program is started and running. In another terminal, start the srsUE to begin the authentication and connection to network. You should see the connected logs.
 
 For further questions, please contact me at `shirin.ebadi@colorado.edu`.
 
