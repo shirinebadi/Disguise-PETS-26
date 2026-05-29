@@ -30,11 +30,4 @@ encl_message_t wait_for_resp();
 void send_buffer_wrapper(void* buffer);
 void send_buffer(void* data, size_t len);
 
-void wait_for_challenge_wrapper(void* buffer);
-encl_message_t send_challenge_to_vSIM();
-
-void send_challenge_response(void* data, size_t len);
-void
-send_challenge_response_wrapper(void* buffer);
-
 #endif /* _EDGE_WRAPPER_H_ */
