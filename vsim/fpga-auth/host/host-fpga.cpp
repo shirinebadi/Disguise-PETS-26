@@ -200,7 +200,6 @@ encl_message_t send_challenge_to_vSIM(){
 
 int main(int argc, char** argv) {
 
-
     std::string rand_str, opc_str, autenb_str;
 
     signal(SIGINT, cleanup);
@@ -235,24 +234,24 @@ int main(int argc, char** argv) {
     shared_data->response_ready = false;
     shared_data->auth_response_ready = false;
     
-    std::cout << "Server started. Waiting for commands..." << std::endl;
+    std::cout << "vSIM started. Waiting for commands..." << std::endl;
     
-  Keystone::Enclave enclave;
-  Keystone::Params params;
-// params.setFreeMemSize(4096 * 1024);
-//   params.setUntrustedSize(1024 * 1024);
-  enclave.init(argv[1], argv[2], argv[3], params);
+    Keystone::Enclave enclave;
+    Keystone::Params params;
+    // params.setFreeMemSize(4096 * 1024);
+    //   params.setUntrustedSize(1024 * 1024);
+    enclave.init(argv[1], argv[2], argv[3], params);
 
     size_t untrusted_size = 2 * 1024 * 1024;
-  size_t freemem_size   = 48 * 1024 * 1024;
-  bool retval_exist     = false;
-  unsigned long retval  = 0;
+    size_t freemem_size   = 48 * 1024 * 1024;
+    bool retval_exist     = false;
+    unsigned long retval  = 0;
 
-  edge_init(&enclave);
-  
-  printf("Starting Enclave...\n");
+    edge_init(&enclave);
+    
+    printf("Starting Enclave...\n");
  
-  enclave.run();
+    enclave.run();
 
 
 

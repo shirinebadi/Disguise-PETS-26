@@ -6,24 +6,17 @@ if (NOT DEFINED ENV{LIBSODIUM_T_DIR})
   message(FATAL_ERROR "Please set LIBSODIUM_T_DIR")
 endif()
 set(LIBSODIUM_C_DIR $ENV{LIBSODIUM_T_DIR})
-# if(NOT DEFINED fw_bin)
-#    set(fw_bin ../../../images/fw_jump.bin)
-# endif()
-# get_filename_component(fw_file ${fw_bin} NAME)
-#if (NOT DEFINED ENV{BSSL_DIR})
- # message(FATAL_ERROR "Please set BSSL_DIR")
-#endif()
-#set(BSSL_DIR $ENV{BSSL_DIR})
+
 
 
 # Set paths to the libraries
 # Define targets and sources
-set(eapp_bin fpga-test)
-set(eapp_src eapp/fpga-test.c eapp/edge_wrapper.c eapp/channel.c eapp/usim.c eapp/aes.c)
-set(host_bin fpga-test-runner)
+set(eapp_bin fpga-auth)
+set(eapp_src eapp/fpga-auth.c eapp/edge_wrapper.c eapp/channel.c eapp/usim.c eapp/aes.c)
+set(host_bin fpga-auth-runner)
 set(host_src host/host-fpga.cpp host/edge_wrapper.cpp)
-set(package_name "fpga-test.ke")
-set(package_script "./fpga-test-runner fpga-test eyrie-rt loader.bin \"$@\"")
+set(package_name "fpga-auth.ke")
+set(package_script "./fpga-auth-runner fpga-auth eyrie-rt loader.bin \"$@\"")
 set(eyrie_plugins "none")
 
 # EAPP target

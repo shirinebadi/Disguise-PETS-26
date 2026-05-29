@@ -6,14 +6,6 @@ if (NOT DEFINED ENV{LIBSODIUM_T_DIR})
   message(FATAL_ERROR "Please set LIBSODIUM_T_DIR")
 endif()
 set(LIBSODIUM_C_DIR $ENV{LIBSODIUM_T_DIR})
-# if(NOT DEFINED fw_bin)
-#    set(fw_bin ../../../images/fw_jump.bin)
-# endif()
-# get_filename_component(fw_file ${fw_bin} NAME)
-#if (NOT DEFINED ENV{BSSL_DIR})
- # message(FATAL_ERROR "Please set BSSL_DIR")
-#endif()
-#set(BSSL_DIR $ENV{BSSL_DIR})
 
 
 # Set paths to the libraries

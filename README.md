@@ -13,8 +13,11 @@ You need to enable and build the set of libraries listed in the `libraries.txt` 
 ## SrsUE
 Replace the `usim.cc` file with the `srsue/src/stack/upper/usim.cc` to enable authentication using vSIM in the trusted enclave. Use the `ue.conf` for UE configuration.
 
+## Libsodium
+Checkout [here](https://github.com/keystone-enclave/keystone-demo/blob/master/docs/Building-libsodium.rst) to build Libsodium.
+
 ## vSIM
-for authentication, make sure to place and build `vsim/fpga-test` in the examples directory and update the `examples/CMakeLists.txt` accordingly.
+for authentication, make sure to place and build `vsim/fpga-auth` in the examples directory(`keystone/examples`) and update the `examples/CMakeLists.txt` accordingly.
 The profile provisioning implementation is located in `vsim/fpga-provision`.
 
 # Run
@@ -22,7 +25,7 @@ The profile provisioning implementation is located in `vsim/fpga-provision`.
 First run the `provider/provider.cpp` for the operator server to be ready and running. Next build and run the `vsim/fpga-provision`. This will add a new subsriber and device profile.
 
 ## Authentication
-Run srsran using `ZMQ` using this [tutorial](https://docs.srsran.com/projects/project/en/latest/tutorials/source/srsUE/source/index.html). Then build and run `vsim/fpga-test`. Make sure the program is started and running. In another terminal, start the srsUE to begin the authentication and connection to network. You should see the logs.
+Run srsran using `ZMQ` using this [tutorial](https://docs.srsran.com/projects/project/en/latest/tutorials/source/srsUE/source/index.html). Then build and run `vsim/fpga-test`. Make sure the program is started and running. In another terminal, start the srsUE to begin the authentication and connection to network. You should see the connected logs.
 
 For further questions, please contact me at `shirin.ebadi@colorado.edu`.
 
