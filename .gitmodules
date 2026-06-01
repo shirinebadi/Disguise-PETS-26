@@ -1,0 +1,3 @@
+[submodule "fpga/vivado-risc-v"]
+	path = fpga/vivado-risc-v
+	url = https://github.com/jzmoolman/vivado-risc-v
