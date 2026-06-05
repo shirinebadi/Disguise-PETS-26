@@ -9,7 +9,7 @@ Requested Badge(s):
 
 
 ## Description 
-This artifact relates to *"Di5Guise: 5G Privacy with vSIM"*, accepted at Issue 4 of PETs'26. It contains the source code for both vsim software and FPGA block desing with keystone. It also provides the modifications to srsue in order to test 5G authentication with vSIM.
+This artifact accompanies the paper *"Di5Guise: 5G Privacy with vSIM"*, accepted to Issue 4 of PETs'26. It includes the source code for the vSIM software, the FPGA block design with Keystone TEE support, and the modifications to srsUE required to evaluate 5G authentication with vSIM. Together, these components enable reproduction of the system described in the paper.
 
 The repository provides:
 1. device and subsriber profile provisioning (`vsim/fpga-provision`) and operator (`provider`).
