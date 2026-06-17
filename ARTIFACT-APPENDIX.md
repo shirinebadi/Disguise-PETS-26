@@ -37,6 +37,6 @@ Checkout the main README for setup and run the codes.
 This artifact is released under the **Available** badge.  
 It provides all codes for the system, but does **not** guarantee reproducibility of full experimental results without further computational resources (e.g., access to FPGA).
 
-## Notes on Reusability (Encouraged for all badges)
+## Notes on Reusability
 
 This code provides a foundation for developing stronger linkability defenses by mitigating or eliminating side-channel attacks.
