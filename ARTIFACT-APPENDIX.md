@@ -17,7 +17,7 @@ The repository provides:
 
 ### Security/Privacy Issues and Ethical Concerns 
 
-- The code does**not** disable security features or run vulnerable features.  
+- The code does **not** disable security features or run vulnerable features.  
 - There are **no human subjects or user study data** bundled in this artifact.  
 
 ## Environment 
