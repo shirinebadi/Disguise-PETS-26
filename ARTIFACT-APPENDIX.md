@@ -41,6 +41,14 @@ The artifact is publicly available at:
 
 **vSIM:** Place and build `vsim/fpga-auth` in `keystone/examples` and update `examples/CMakeLists.txt` accordingly. The profile provisioning implementation is in `vsim/fpga-provision`.
 
+### Testing the Environment 
+
+**Profile Provisioning:** First run `provider/provider.cpp` so the operator server is ready. Then build and run `vsim/fpga-provision`. This will add a new subscriber and device profile.
+
+**Authentication:** Run srsRAN with ZMQ using this [tutorial](https://docs.srsran.com/projects/project/en/latest/tutorials/source/srsUE/source/index.html). Then build and run `vsim/fpga-auth` and confirm it is running. In a separate terminal, start srsUE to begin authentication and connection to the network. You should see connected logs.
+
+For further questions, contact `shirin.ebadi@colorado.edu`.
+
 
 ## Limitations 
 
