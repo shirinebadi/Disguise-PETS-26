@@ -12,8 +12,8 @@ Requested Badge(s):
 This artifact accompanies the paper *"Di5Guise: 5G Privacy with vSIM"*, accepted to Issue 4 of PETs'26. It includes the source code for the vSIM software, the FPGA block design with Keystone TEE support, and the modifications to srsUE required to evaluate 5G authentication with vSIM. Together, these components enable reproduction of the system described in the paper.
 
 The repository provides:
-1. device and subsriber profile provisioning (`vsim/fpga-provision`) and operator (`provider`).
-2. Modifications to srsUE (`srsue/usim.cc`) and 5G authenction (`vsim/fpga-auth`).
+1. Device and subscriber profile provisioning (`vsim/fpga-provision`) and operator (`provider`).
+2. Modifications to srsUE (`srsue/usim.cc`) and 5G authentication (`vsim/fpga-auth`).
 
 ### Security/Privacy Issues and Ethical Concerns 
 
@@ -29,7 +29,19 @@ The artifact is publicly available at:
 
 ### Set up the environment 
 
-Checkout the main README for setup and run the codes.
+Full setup details are in `README.md`. The steps are summarized below.
+
+**QEMU or FPGA:** Run the code on QEMU or an FPGA board. For FPGA, see the [Vivado RISC-V design](https://github.com/jzmoolman/vivado-risc-v). For QEMU, follow the [Keystone QEMU instructions](https://docs.keystone-enclave.org/en/v0.1-c2e5205/Getting-Started/Running-Keystone-with-QEMU.html) and add a tunnel between the host and QEMU for network access.
+
+**Keystone:** Set up Keystone and verify the example applications run. Replace all `string.c` files in Keystone with `keystone-patches/string.c`.
+
+**Buildroot:** Enable and build the libraries listed in `libraries.txt` in the buildroot configuration. Download and place srsUE (following the [ZeroMQ app note](https://docs.srsran.com/projects/4g/en/latest/app_notes/source/zeromq/source/index.html)) in `buildroot/dl` and add the corresponding package files to `buildroot/package`. Enable ZMQ-based packages in buildroot and ensure ZMQ is enabled during the srsUE build.
+
+**SrsUE:** Replace `srsue/src/stack/upper/usim.cc` with the provided `srsue/usim.cc` to enable authentication via vSIM in the trusted enclave. Use the provided `ue.conf` for UE configuration.
+
+**Libsodium:** Build Libsodium following [these instructions](https://github.com/keystone-enclave/keystone-demo/blob/master/docs/Building-libsodium.rst).
+
+**vSIM:** Place and build `vsim/fpga-auth` in `keystone/examples` and update `examples/CMakeLists.txt` accordingly. The profile provisioning implementation is in `vsim/fpga-provision`.
 
 
 ## Limitations 

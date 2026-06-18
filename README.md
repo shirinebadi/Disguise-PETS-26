@@ -1,24 +1,8 @@
 This repository contains the protoype code of the Di5Guise system published at PETS'26.
 
 # Setup
-## QEMU or FPGA
-You can either run the code on Qemu or on your FPGA board. Checkout [here](https://github.com/jzmoolman/vivado-risc-v) for The FPGA design. Otherwise, follow the instructions from [here](https://docs.keystone-enclave.org/en/v0.1-c2e5205/Getting-Started/Running-Keystone-with-QEMU.html) to setup Keystone with QEMU. Also, make sure to add the tunnel between the host and QEMU for network accessibility.
 
-## Keystone
-You need to setup the keystone in your environment and make sure the example applications are running. Replace the `keystone-patches/string.c` file with all the `string.c` files in the keystone. 
-
-## Buildroot
-You need to enable and build the set of libraries listed in the `libraries.txt` in the buildroot configuration. Then, download and place srsue (following the [instruction](https://docs.srsran.com/projects/4g/en/latest/app_notes/source/zeromq/source/index.html)) in the `buildroot/dl` directory, and add the corresponding package files to the `buildroot/package`. Make sure you already enabled ZMQ-based packages in the buildroot configuration and ZMQ is enabled during srsue build.
-
-## SrsUE
-Replace the `usim.cc` file with the `srsue/src/stack/upper/usim.cc` to enable authentication using vSIM in the trusted enclave. Use the `ue.conf` for UE configuration.
-
-## Libsodium
-Checkout [here](https://github.com/keystone-enclave/keystone-demo/blob/master/docs/Building-libsodium.rst) to build Libsodium.
-
-## vSIM
-for authentication, make sure to place and build `vsim/fpga-auth` in the examples directory(`keystone/examples`) and update the `examples/CMakeLists.txt` accordingly.
-The profile provisioning implementation is located in `vsim/fpga-provision`.
+See `ARTIFACT-APPENDIX.md` for full environment setup instructions.
 
 # Run
 ## Profile Provisioning
