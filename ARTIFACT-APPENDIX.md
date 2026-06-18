@@ -29,8 +29,6 @@ The artifact is publicly available at:
 
 ### Set up the environment 
 
-Full setup details are in `README.md`. The steps are summarized below.
-
 **QEMU or FPGA:** Run the code on QEMU or an FPGA board. For FPGA, see the [Vivado RISC-V design](https://github.com/jzmoolman/vivado-risc-v). For QEMU, follow the [Keystone QEMU instructions](https://docs.keystone-enclave.org/en/v0.1-c2e5205/Getting-Started/Running-Keystone-with-QEMU.html) and add a tunnel between the host and QEMU for network access.
 
 **Keystone:** Set up Keystone and verify the example applications run. Replace all `string.c` files in Keystone with `keystone-patches/string.c`.
